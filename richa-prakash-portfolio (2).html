@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Richa Prakash — Financial Crime Compliance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14181D;
+    --ink-2:#1D232B;
+    --paper:#EFEBE1;
+    --paper-2:#E4DFD1;
+    --brass:#A9863E;
+    --brass-light:#C9A868;
+    --teal:#2F6F62;
+    --teal-light:#4C9186;
+    --stamp:#8B3A3A;
+    --line: rgba(239,235,225,0.14);
+    --line-dark: rgba(20,24,29,0.12);
+    --text-dim: rgba(239,235,225,0.62);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--brass); color:var(--ink);}
+
+  .grain{
+    position:fixed; inset:0; pointer-events:none; opacity:0.035; z-index:999;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- layout shell ---- */
+  .shell{display:flex; max-width:1280px; margin:0 auto;}
+  .rail{
+    width:64px; flex-shrink:0; display:flex; flex-direction:column; align-items:center;
+    padding-top:48px; position:sticky; top:0; height:100vh; gap:28px;
+  }
+  .rail-dot{
+    width:8px; height:8px; border-radius:50%; background:rgba(239,235,225,0.25);
+    position:relative; cursor:pointer; transition:all .3s ease;
+  }
+  .rail-dot.active{background:var(--brass-light); box-shadow:0 0 0 4px rgba(201,168,104,0.15);}
+  .rail-dot .tag{
+    position:absolute; left:20px; top:-6px; font-size:10px; letter-spacing:0.12em;
+    white-space:nowrap; opacity:0; transition:opacity .2s ease; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .rail-dot:hover .tag, .rail-dot.active .tag{opacity:1;}
+  .rail-line{width:1px; flex:1; background:linear-gradient(var(--line), transparent);}
+
+  main{flex:1; min-width:0;}
+  section{padding:96px 56px; border-bottom:1px solid var(--line);}
+  @media (max-width:760px){
+    .rail{display:none;}
+    section{padding:64px 24px;}
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--brass-light); margin-bottom:18px; display:flex;
+    align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:22px; height:1px; background:var(--brass-light);}
+
+  /* ---- hero ---- */
+  .hero{padding-top:88px; position:relative;}
+  .case-plate{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-dim);
+    letter-spacing:0.1em; display:flex; justify-content:space-between; max-width:640px;
+    margin-bottom:36px; text-transform:uppercase;
+  }
+  .hero h1{font-size:clamp(42px, 7vw, 76px); line-height:0.98; margin-bottom:14px;}
+  .hero .role{font-size:19px; color:var(--brass-light); font-weight:500; margin-bottom:28px;}
+  .hero p.lede{max-width:620px; font-size:17px; color:var(--text-dim); margin-bottom:36px;}
+  .seal{
+    position:absolute; top:70px; right:56px; width:118px; height:118px;
+    border:1.5px solid var(--stamp); border-radius:50%; color:var(--stamp);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    transform:rotate(-9deg); opacity:0.85; font-family:'IBM Plex Mono', monospace;
+  }
+  .seal-inner{border:1px solid var(--stamp); border-radius:50%; width:98px; height:98px;
+    display:flex; align-items:center; justify-content:center; font-size:10px; letter-spacing:0.1em;
+    line-height:1.5; padding:8px;}
+  @media (max-width:760px){ .seal{display:none;} }
+
+  .hero-meta{display:flex; gap:32px; flex-wrap:wrap; margin-top:44px;}
+  .hero-meta div{border-left:2px solid var(--brass); padding-left:14px;}
+  .hero-meta .num{font-family:'Fraunces', serif; font-size:30px; color:var(--paper);}
+  .hero-meta .label{font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px;}
+
+  /* ---- profile ---- */
+  .profile-grid{display:grid; grid-template-columns:1.3fr 0.9fr; gap:56px;}
+  @media (max-width:900px){ .profile-grid{grid-template-columns:1fr;} }
+  .folio{
+    background:var(--paper); color:var(--ink); border-radius:2px; padding:36px 38px;
+    box-shadow:0 30px 60px -30px rgba(0,0,0,0.5);
+  }
+  .folio h3{font-size:22px; margin-bottom:16px; color:var(--ink);}
+  .folio p{color:#4A473F; font-size:15.5px; margin-bottom:14px;}
+  .folio p:last-child{margin-bottom:0;}
+  .stat-strip{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line-dark); border:1px solid var(--line-dark); margin-top:8px;}
+  .stat-cell{background:var(--paper-2); padding:20px;}
+  .stat-cell .num{font-family:'Fraunces', serif; font-size:26px; color:var(--stamp);}
+  .stat-cell .label{font-size:11.5px; color:#5c584c; margin-top:4px; text-transform:uppercase; letter-spacing:0.06em;}
+
+  .tag-cloud{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+  .tag{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; padding:6px 12px;
+    border:1px solid var(--line); border-radius:2px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:0.04em;
+  }
+
+  /* ---- AI section / signature widget ---- */
+  .ai-section{background:linear-gradient(180deg, var(--ink-2), var(--ink));}
+  .ai-head{max-width:680px; margin-bottom:44px;}
+  .ai-head p{color:var(--text-dim); font-size:16px;}
+  .pov-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin-bottom:56px;}
+  @media (max-width:760px){ .pov-grid{grid-template-columns:1fr;} }
+  .pov-cell{background:var(--ink); padding:26px 28px;}
+  .pov-cell .idx{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--teal-light); margin-bottom:10px;}
+  .pov-cell h4{font-family:'Inter', sans-serif; font-weight:600; font-size:15.5px; margin-bottom:8px; color:var(--paper);}
+  .pov-cell p{font-size:14px; color:var(--text-dim);}
+
+  .sim{
+    border:1px solid var(--line); border-radius:3px; overflow:hidden; background:var(--ink-2);
+  }
+  .sim-head{
+    display:flex; justify-content:space-between; align-items:center; padding:18px 24px;
+    border-bottom:1px solid var(--line); flex-wrap:wrap; gap:14px;
+  }
+  .sim-head h4{font-family:'IBM Plex Mono', monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-dim); font-weight:500;}
+  .toggle{
+    display:flex; background:var(--ink); border:1px solid var(--line); border-radius:20px; padding:3px; gap:2px;
+  }
+  .toggle button{
+    background:none; border:none; color:var(--text-dim); font-family:'IBM Plex Mono', monospace;
+    font-size:11px; text-transform:uppercase; letter-spacing:0.06em; padding:8px 16px; border-radius:16px;
+    cursor:pointer; transition:all .25s ease;
+  }
+  .toggle button.on{background:var(--teal); color:#fff;}
+
+  .queue{padding:8px 0;}
+  .alert-row{
+    display:grid; grid-template-columns:90px 1fr 130px 110px; gap:16px; align-items:center;
+    padding:16px 24px; border-bottom:1px solid var(--line); transition:all .35s ease;
+  }
+  .alert-row:last-child{border-bottom:none;}
+  .alert-row .id{font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-dim);}
+  .alert-row .desc{font-size:13.5px; color:var(--paper);}
+  .alert-row .desc .sub{display:block; font-size:11.5px; color:var(--text-dim); margin-top:2px;}
+  .badge{font-family:'IBM Plex Mono', monospace; font-size:10.5px; padding:5px 10px; border-radius:20px; text-align:center; text-transform:uppercase; letter-spacing:0.04em; transition:all .3s ease;}
+  .badge.true{background:rgba(139,58,58,0.18); color:#D98787; border:1px solid rgba(139,58,58,0.4);}
+  .badge.false{background:rgba(47,111,98,0.18); color:var(--teal-light); border:1px solid rgba(47,111,98,0.4);}
+  .badge.pending{background:rgba(169,134,62,0.15); color:var(--brass-light); border:1px solid rgba(169,134,62,0.4);}
+  .conf{font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-dim); text-align:right;}
+
+  .sim-metrics{display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line);}
+  .sim-metric{padding:22px 24px; border-right:1px solid var(--line);}
+  .sim-metric:last-child{border-right:none;}
+  .sim-metric .num{font-family:'Fraunces', serif; font-size:28px; color:var(--brass-light); transition:color .3s ease;}
+  .sim-metric .label{font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em; margin-top:4px;}
+  .sim-note{padding:16px 24px; font-size:12.5px; color:var(--text-dim); border-top:1px solid var(--line); font-style:italic;}
+
+  @media (max-width:600px){
+    .alert-row{grid-template-columns:1fr; gap:6px; text-align:left;}
+    .conf{text-align:left;}
+    .sim-metrics{grid-template-columns:1fr;}
+    .sim-metric{border-right:none; border-bottom:1px solid var(--line);}
+  }
+
+  /* ---- timeline ---- */
+  .ledger-row{
+    display:grid; grid-template-columns:150px 1fr 200px; gap:20px; padding:22px 0;
+    border-bottom:1px solid var(--line); align-items:start;
+  }
+  .ledger-row:first-of-type{border-top:1px solid var(--line);}
+  .ledger-row .period{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--brass-light);}
+  .ledger-row h4{font-size:18px; margin-bottom:4px;}
+  .ledger-row .org{font-size:13.5px; color:var(--text-dim); margin-bottom:10px;}
+  .ledger-row ul{list-style:none; display:flex; flex-direction:column; gap:6px;}
+  .ledger-row li{font-size:13.5px; color:var(--text-dim); padding-left:16px; position:relative;}
+  .ledger-row li::before{content:'—'; position:absolute; left:0; color:var(--brass);}
+  .ledger-row .loc{font-size:12px; color:var(--text-dim); text-align:right; font-family:'IBM Plex Mono', monospace;}
+  @media (max-width:760px){ .ledger-row{grid-template-columns:1fr;} .ledger-row .loc{text-align:left;} }
+
+  .prev-table{width:100%; border-collapse:collapse; margin-top:32px; font-size:13.5px;}
+  .prev-table th{
+    text-align:left; font-family:'IBM Plex Mono', monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--text-dim); padding:10px 14px; border-bottom:1px solid var(--line); font-weight:500;
+  }
+  .prev-table td{padding:12px 14px; border-bottom:1px solid var(--line); color:var(--paper);}
+  .prev-table tr:last-child td{border-bottom:none;}
+
+  /* ---- achievements ---- */
+  .ach-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  @media (max-width:900px){ .ach-grid{grid-template-columns:1fr 1fr;} }
+  .ach-cell{background:var(--ink); padding:32px 26px;}
+  .ach-cell .num{font-family:'Fraunces', serif; font-size:38px; color:var(--brass-light);}
+  .ach-cell .cap{font-size:13px; color:var(--paper); margin-top:8px; font-weight:600;}
+  .ach-cell .sub{font-size:12.5px; color:var(--text-dim); margin-top:6px;}
+
+  /* ---- seals / certs ---- */
+  .cert-row{display:flex; gap:40px; align-items:center; flex-wrap:wrap;}
+  .cert-seal{
+    width:104px; height:104px; border-radius:50%; border:1.5px solid var(--brass);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative;
+  }
+  .cert-seal::before{content:''; position:absolute; inset:8px; border:1px dashed var(--brass); border-radius:50%;}
+  .cert-seal span{font-family:'IBM Plex Mono', monospace; font-size:9.5px; text-align:center; color:var(--brass-light); letter-spacing:0.05em; padding:14px;}
+  .cert-text h4{font-size:16px; margin-bottom:6px;}
+  .cert-text p{font-size:13.5px; color:var(--text-dim); max-width:440px;}
+
+  /* ---- contact / footer ---- */
+  footer{padding:80px 56px 56px; text-align:center;}
+  footer h2{font-size:clamp(30px,5vw,48px); margin-bottom:18px;}
+  footer p{color:var(--text-dim); max-width:460px; margin:0 auto 32px;}
+  .contact-links{display:flex; gap:28px; justify-content:center; flex-wrap:wrap; font-family:'IBM Plex Mono', monospace; font-size:13px;}
+  .contact-links a{padding-bottom:3px; border-bottom:1px solid var(--brass); color:var(--paper); text-decoration:none;}
+  .foot-meta{margin-top:56px; font-size:11px; color:var(--text-dim); font-family:'IBM Plex Mono', monospace; letter-spacing:0.05em;}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<div class="shell">
+  <nav class="rail" id="rail">
+    <div class="rail-dot active" data-target="hero"><span class="tag">Profile</span></div>
+    <div class="rail-dot" data-target="summary"><span class="tag">Summary</span></div>
+    <div class="rail-dot" data-target="ai"><span class="tag">AI Lens</span></div>
+    <div class="rail-dot" data-target="timeline"><span class="tag">Experience</span></div>
+    <div class="rail-dot" data-target="achievements"><span class="tag">Record</span></div>
+    <div class="rail-dot" data-target="contact"><span class="tag">Contact</span></div>
+    <div class="rail-line"></div>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="case-plate">
+        <span>File No. RP&middot;2026&middot;FCC</span>
+        <span>Status: Open to opportunities</span>
+        <span>Cleared — India &amp; UK</span>
+      </div>
+      <h1>Richa<br>Prakash</h1>
+      <div class="role">Financial Crime Compliance · AML, KYC &amp; Sanctions Screening</div>
+      <p class="lede">Twelve years spent reading the fine print in other people's money — building the controls, screens and judgment calls that keep global banking honest, across correspondent banking, sanctions and high-risk onboarding in India and the UK.</p>
+      <div class="seal">
+        <div class="seal-inner">12 YRS<br>ZERO<br>DISCREPANCIES</div>
+      </div>
+      <div class="hero-meta">
+        <div><div class="num">12+</div><div class="label">Years in FCC</div></div>
+        <div><div class="num">150+</div><div class="label">High-risk clients onboarded</div></div>
+        <div><div class="num">100%</div><div class="label">Sanctions audits passed, 3yrs</div></div>
+        <div><div class="num">4</div><div class="label">Global banks</div></div>
+      </div>
+    </section>
+
+    <!-- SUMMARY -->
+    <section id="summary">
+      <div class="eyebrow">Profile Summary</div>
+      <div class="profile-grid">
+        <div class="folio">
+          <h3>Dynamic Financial Crime Compliance Specialist</h3>
+          <p>Over twelve years orchestrating end-to-end AML, KYC and sanctions screening within complex global banking ecosystems — with direct exposure across India and the UK, elevating compliance frameworks and risk mitigation strategies along the way.</p>
+          <p>A proven hand at high-stakes client onboarding and due diligence, holding the line on FATF, FCA and RBI standards while pushing operational efficiency through process redesign and cross-functional stakeholder engagement.</p>
+          <p>Fluent in Enhanced and Customer Due Diligence, PEP and adverse-media assessment, and the kind of risk judgment that only comes from sitting inside the alert queue — not just designing it from the outside.</p>
+          <div class="stat-strip">
+            <div class="stat-cell"><div class="num">30%</div><div class="label">Faster alert resolution</div></div>
+            <div class="stat-cell"><div class="num">25%</div><div class="label">Better false-positive accuracy</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-top:0;">Core Competencies</div>
+          <div class="tag-cloud">
+            <span class="tag">AML</span><span class="tag">KYC</span><span class="tag">CDD</span>
+            <span class="tag">EDD</span><span class="tag">Sanctions Screening</span>
+            <span class="tag">SAR</span><span class="tag">Transaction Monitoring</span>
+            <span class="tag">PEP Review</span><span class="tag">Adverse Media</span>
+            <span class="tag">Regulatory Compliance</span><span class="tag">Fraud Detection</span>
+            <span class="tag">Audit &amp; Reporting</span><span class="tag">Team Leadership</span>
+          </div>
+          <div class="eyebrow" style="margin-top:36px;">Tooling</div>
+          <div class="tag-cloud">
+            <span class="tag">Lexis Nexis</span><span class="tag">Detica</span>
+            <span class="tag">ACE Pelican</span><span class="tag">Nexus</span>
+            <span class="tag">Swift</span><span class="tag">Banqs</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI LENS -->
+    <section id="ai" class="ai-section">
+      <div class="eyebrow">The AI Lens</div>
+      <div class="ai-head">
+        <h2 style="font-size:clamp(28px,4vw,38px); margin-bottom:14px;">Where AI is actually changing the compliance floor</h2>
+        <p>Richa's view, formed from years inside the alert queue rather than a vendor deck: AI doesn't replace the KYC analyst's judgment — it changes what the analyst spends that judgment on. The gains show up in the noise, not the decision.</p>
+      </div>
+
+      <div class="pov-grid">
+        <div class="pov-cell">
+          <div class="idx">01 / TRIAGE</div>
+          <h4>Machine learning thins the queue before a human touches it</h4>
+          <p>Anomaly-scoring models on transaction monitoring can rank alerts by genuine risk instead of raw rule-hits, so investigators spend time on the matches likely to be true — which is exactly the mechanism behind the false-positive gains she's driven in past roles.</p>
+        </div>
+        <div class="pov-cell">
+          <div class="idx">02 / SCREENING</div>
+          <h4>Fuzzy-matching &amp; NLP cut through name-screening noise</h4>
+          <p>Entity resolution and natural-language processing over adverse media and sanctions lists catch transliteration and alias variants that rigid rule-based screening misses — while still routing every genuine hit to a human for disposition.</p>
+        </div>
+        <div class="pov-cell">
+          <div class="idx">03 / GOVERNANCE</div>
+          <h4>Explainability is the price of admission, not a nice-to-have</h4>
+          <p>A model a regulator can't interrogate is a model compliance can't defend. Any AI in the sanctions or SAR workflow needs an audit trail as rigorous as the one built for human decisions — FATF, FCA and RBI expectations don't relax for automation.</p>
+        </div>
+        <div class="pov-cell">
+          <div class="idx">04 / THE ANALYST</div>
+          <h4>The job shifts from searching to judging</h4>
+          <p>As AI absorbs the repetitive matching work, the analyst's value moves toward escalation calls, narrative-writing on SARs, and reading intent behind ownership structures — the parts of the job that still resist automation.</p>
+        </div>
+      </div>
+
+      <div class="eyebrow">Live illustration</div>
+      <div class="sim">
+        <div class="sim-head">
+          <h4>Sanctions &amp; Adverse Media Alert Queue — sample day</h4>
+          <div class="toggle">
+            <button id="btn-manual" class="on">Manual screening</button>
+            <button id="btn-ai">AI-assisted triage</button>
+          </div>
+        </div>
+        <div class="queue" id="queue"></div>
+        <div class="sim-metrics">
+          <div class="sim-metric"><div class="num" id="m-time">6.4 hrs</div><div class="label">Avg. resolution time</div></div>
+          <div class="sim-metric"><div class="num" id="m-fp">62%</div><div class="label">Of hits are false positives</div></div>
+          <div class="sim-metric"><div class="num" id="m-esc">4</div><div class="label">Genuine escalations found</div></div>
+        </div>
+        <div class="sim-note">Illustrative figures modelled on the resolution-time and false-positive improvements Richa has delivered in live sanctions-screening environments — not a claim about any specific vendor tool.</div>
+      </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section id="timeline">
+      <div class="eyebrow">Career Ledger</div>
+
+      <div class="ledger-row">
+        <div class="period">Sep 2022 –<br>May 2025</div>
+        <div>
+          <h4>Senior Officer</h4>
+          <div class="org">Punjab National Bank (PNB), UK</div>
+          <ul>
+            <li>Coached peers on alert resolution accuracy and turnaround, partnering directly with the Department Head</li>
+            <li>Ran end-to-end financial crime reviews through the Banqs application, catching sanctions and AML exposure</li>
+            <li>Screened SWIFT payments against OFAC watchlists via the TCS platform, documenting rationale on every false positive</li>
+          </ul>
+        </div>
+        <div class="loc">United Kingdom</div>
+      </div>
+
+      <div class="ledger-row">
+        <div class="period">May 2022 –<br>Sep 2022</div>
+        <div>
+          <h4>KYC Officer</h4>
+          <div class="org">State Bank of India (SBI), UK</div>
+          <ul>
+            <li>Validated customer transactions against AML regulations, flagging red-flag activity early</li>
+            <li>Investigated and filed detailed SAR submissions on suspicious financial activity</li>
+            <li>Used ACE Pelican to separate false positives from true matches across the client book</li>
+          </ul>
+        </div>
+        <div class="loc">United Kingdom</div>
+      </div>
+
+      <div class="ledger-row">
+        <div class="period">Aug 2016 –<br>Mar 2021</div>
+        <div>
+          <h4>Senior Analyst → Team Lead</h4>
+          <div class="org">Standard Chartered, Bangalore</div>
+          <ul>
+            <li>Assessed KYC files for new and existing clients against the Bank's Customer Identification Program</li>
+            <li>Ran EDD/CDD on correspondent banking relationships, PEPs, and complex ownership structures</li>
+            <li>Verified beneficial ownership and source of funds against internal and external intelligence</li>
+            <li>Dispositioned true and false matches through Detica and Lexis Nexis screening</li>
+          </ul>
+        </div>
+        <div class="loc">Bangalore, India</div>
+      </div>
+
+      <div class="eyebrow" style="margin-top:48px;">Earlier Record</div>
+      <table class="prev-table">
+        <tr><th>Duration</th><th>Role</th><th>Organisation</th><th>Location</th></tr>
+        <tr><td>Aug 2013 – Jun 2014</td><td>Senior Associate</td><td>Societe Generale Global Solution Centre</td><td>Bangalore</td></tr>
+        <tr><td>Jun 2010 – Aug 2013</td><td>KYC Analyst</td><td>Deutsche Bank Operations International</td><td>Bangalore</td></tr>
+        <tr><td>Sep 2008 – Mar 2009</td><td>Back Office Coordinator</td><td>India Infoline</td><td>Bangalore</td></tr>
+        <tr><td>Sep 2007 – May 2008</td><td>Customer Service Representative</td><td>Kirloskar BPO</td><td>Bangalore</td></tr>
+      </table>
+    </section>
+
+    <!-- ACHIEVEMENTS -->
+    <section id="achievements">
+      <div class="eyebrow">On the Record</div>
+      <div class="ach-grid">
+        <div class="ach-cell"><div class="num">30%</div><div class="cap">Faster alert resolution</div><div class="sub">Process redesign across the compliance desk</div></div>
+        <div class="ach-cell"><div class="num">100%</div><div class="cap">Sanctions audit pass rate</div><div class="sub">Three consecutive years, team-led</div></div>
+        <div class="ach-cell"><div class="num">25%</div><div class="cap">Better false-positive accuracy</div><div class="sub">Transaction monitoring tuning</div></div>
+        <div class="ach-cell"><div class="num">150+</div><div class="cap">High-risk clients onboarded</div><div class="sub">Zero documentation errors</div></div>
+      </div>
+
+      <div class="eyebrow" style="margin-top:64px;">Education &amp; Certification</div>
+      <div class="cert-row">
+        <div class="cert-seal"><span>AML &amp; CTF<br>CERTIFIED<br>MANCHESTER</span></div>
+        <div class="cert-text">
+          <h4>Certification in Anti-Money Laundering &amp; Terrorist Financing</h4>
+          <p>University of Manchester — plus an MBA in HR (Sikkim Manipal University, 2012) and a B.Sc. in Biotechnology (Bangalore University, 2010).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <footer id="contact">
+      <div class="eyebrow" style="justify-content:center;">Get in touch</div>
+      <h2>Let's talk compliance.</h2>
+      <p>Based in Bangalore, open to roles across financial crime compliance, KYC and risk — in India or remote with a UK-facing team.</p>
+      <div class="contact-links">
+        <a href="mailto:richaprakash2007@gmail.com">richaprakash2007@gmail.com</a>
+        <a href="tel:+919739158380">+91 97391 58380</a>
+        <a href="https://www.linkedin.com/in/richa-prakash-23326515b/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <div class="foot-meta">RICHA PRAKASH · FINANCIAL CRIME COMPLIANCE · BANGALORE, INDIA</div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // scrollspy
+  const dots = document.querySelectorAll('.rail-dot');
+  const sections = [...dots].map(d => document.getElementById(d.dataset.target));
+  dots.forEach(d => d.addEventListener('click', () => {
+    document.getElementById(d.dataset.target).scrollIntoView({behavior:'smooth'});
+  }));
+  const spy = () => {
+    let idx = 0;
+    sections.forEach((s,i) => { if (s && s.getBoundingClientRect().top <= 140) idx = i; });
+    dots.forEach((d,i) => d.classList.toggle('active', i===idx));
+  };
+  window.addEventListener('scroll', spy);
+  spy();
+
+  // AI triage simulator
+  const alerts = [
+    {id:'ALT-2201', name:'SWIFT payment — offshore holdco', sub:'Ownership chain, 3 jurisdictions'},
+    {id:'ALT-2204', name:'PEP name match — transliteration variant', sub:'Adverse media screen'},
+    {id:'ALT-2209', name:'Correspondent bank wire — high-risk corridor', sub:'Sanctions watchlist hit'},
+    {id:'ALT-2213', name:'Beneficial owner name match', sub:'Common-name false hit pattern'},
+    {id:'ALT-2217', name:'Adverse media — negative news hit', sub:'Entity screening'},
+    {id:'ALT-2220', name:'Structuring pattern — multiple small wires', sub:'Transaction monitoring'},
+  ];
+  const manualState = ['pending','pending','pending','pending','pending','pending'];
+  const aiState = ['true','false','true','false','false','true'];
+  const confManual = ['Reviewing','Reviewing','Reviewing','Reviewing','Reviewing','Reviewing'];
+  const confAI = ['92% match','8% match','88% match','6% match','11% match','81% match'];
+
+  const queueEl = document.getElementById('queue');
+  function render(mode){
+    queueEl.innerHTML = alerts.map((a,i) => {
+      const state = mode === 'ai' ? aiState[i] : manualState[i];
+      const conf = mode === 'ai' ? confAI[i] : confManual[i];
+      const label = state === 'true' ? 'True match' : state === 'false' ? 'False positive' : 'Pending review';
+      return `<div class="alert-row">
+        <div class="id">${a.id}</div>
+        <div class="desc">${a.name}<span class="sub">${a.sub}</span></div>
+        <div class="badge ${state}">${label}</div>
+        <div class="conf">${conf}</div>
+      </div>`;
+    }).join('');
+  }
+  render('manual');
+
+  const btnManual = document.getElementById('btn-manual');
+  const btnAI = document.getElementById('btn-ai');
+  const mTime = document.getElementById('m-time');
+  const mFP = document.getElementById('m-fp');
+  const mEsc = document.getElementById('m-esc');
+
+  function setMode(mode){
+    btnManual.classList.toggle('on', mode==='manual');
+    btnAI.classList.toggle('on', mode==='ai');
+    render(mode);
+    if(mode==='ai'){
+      mTime.textContent = '4.4 hrs';
+      mFP.textContent = '37%';
+      mEsc.textContent = '4';
+    } else {
+      mTime.textContent = '6.4 hrs';
+      mFP.textContent = '62%';
+      mEsc.textContent = '4';
+    }
+  }
+  btnManual.addEventListener('click', () => setMode('manual'));
+  btnAI.addEventListener('click', () => setMode('ai'));
+</script>
+</body>
+</html>
